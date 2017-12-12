@@ -19,6 +19,7 @@ nav{
     padding: 10px;
     border: 2px solid white;
     margin: auto;
+    border-radius: 2px;
 }
 body{
     background-color: #ebefc9;
@@ -48,12 +49,17 @@ table{
     top:0;
     border-left: 2px solid white;
     border-bottom: 2px solid white;
+    border-bottom-left-radius: 2px;
 }
 td{
     background-color: white;
     padding: 3px;
     color: #ebefc9;
     opacity: .8;
+    user-select: none;
+    font-weight: 300;
+    width: 55px;
+    transition: 400ms;
 }
 td.sel{
     opacity: 1;
@@ -61,4 +67,55 @@ td.sel{
 }
 table:focus{
     outline: ;
+}
+header strong{
+    font-weight: 300;
+    font-size: 12px;
+
+}
+header input{
+    border: none;
+    font-size: 16px;
+    color: white;
+    font-family: "Courier New";
+    vertical-align: middle;
+    background-color: transparent;
+    font-weight: 700;
+    padding-left: 5px;
+    width: 390px;
+}
+header input:focus{
+    outline: none;
+}
+main div{
+    width: 200px;
+    padding: 5px;
+    float: left;
+    margin: 5px;
+    border-radius: 2px;
+}
+.R{
+    background-color: #cc5555;
+}
+.D{
+    background-color: #5555cc;
+}
+.I{
+    background-color: #55cc55;
+}
+main{
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 12px;
+}
+main strong{
+    color: white;
+    font-weight: 500;
+}
+main span{
+    font-size: 25px;
+    font-weight: 300;
+    clear: both;
+    display: inline-block;
+    text-align: center;
 }
