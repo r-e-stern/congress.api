@@ -1,6 +1,7 @@
 var APIKEY;
 var CHAM = "house"
 
+//COLOR MAP FEATURE
 
 $(document).ready(function () {
     $("#map").usmap({
@@ -49,7 +50,30 @@ function getReps(result, data){
     console.log(result);
     $("main").empty().append("<span>"+abbrState(data.name,"name")+"</span>");
     for(var i=0; i<result.results.length; i++){
-        $("main").append("<div class='"+result.results[i].party+"'><strong>"+result.results[i].name+"</strong></div>");
+        $("main").append("<div class='"+result.results[i].party+"'><strong>"+result.results[i].role.substr(0,3)+". "+result.results[i].name+"</strong></div>");
+        if(CHAM=="house"){
+            $("main div:last-child").append("<br/>District "+result.results[i].district+"<br/>");
+        }else{
+            $("main div:last-child").append("<br/>"+result.results[i].role+"<br/>");
+        }
+        if(result.results[i].facebook_account != null){
+            $("main div:last-child").append("<a href='https://www.facebook.com/"+result.results[i].facebook_account+"'><img src='https://png.icons8.com/ios/2x/facebook.png'></a>");
+        }
+        if(result.results[i].twitter_id != null){
+            $("main div:last-child").append("<a href='https://www.twitter.com/"+result.results[i].twitter_id+"'><img src='https://png.icons8.com/ios/2x/twitter.png'></a>");
+        }
+        $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>")
+        $(".link").click(function(){
+            $.ajax({
+                url: $(this).data("call"),
+                type: 'GET',
+                beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
+                crossDomain: true,
+                dataType: 'json',
+                success: function(result){console.log(result)},
+                error: function(){}
+            });
+        })
     }
 }
 

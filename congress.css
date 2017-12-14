@@ -88,7 +88,7 @@ header input:focus{
     outline: none;
 }
 main div{
-    width: 200px;
+    width: 250px;
     padding: 5px;
     float: left;
     margin: 5px;
@@ -116,6 +116,20 @@ main span{
     font-size: 25px;
     font-weight: 300;
     clear: both;
-    display: inline-block;
+    display: block;
     text-align: center;
+}
+main div img{
+    filter: invert(80%);
+    height: 25px;
+    opacity: .8;
+}
+main div a:hover img{
+    filter: invert(90%);
+}
+main div img.link:hover{
+    filter: invert(100%);
+}
+main div img.link{
+    float:right;
 }
