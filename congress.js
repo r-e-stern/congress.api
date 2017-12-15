@@ -1,48 +1,79 @@
 var APIKEY;
-var CHAM = "house"
+var CHAM = "house";
+var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN',
+    'KS','KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM',
+    'NV','NY', 'OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV',
+    'WY'];
 
 //COLOR MAP FEATURE
 
 $(document).ready(function () {
-    $("#map").usmap({
-        stateStyles: {
-            'fill': 'white',
-            'stroke': '#ebefc9',
-            'stroke-width':1},
-        stateHoverStyles: {
-            'fill': "#d5de8e",
-            'stroke':"black",
-            'stroke-width':2},
-        showLabels: false,
-        click: function (event, data) {
-            $.ajax({
-                url: "https://api.propublica.org/congress/v1/members/"+CHAM+"/"+data.name+"/current.json",
-                type: 'GET',
-                beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
-                crossDomain: true,
-                dataType: 'json',
-                success: function(result){getReps(result, data)},
-                error: function(){}
-            });
-
-        },
-        mouseover: function(event,data){
-            $("#maphelper").text(abbrState(data.name,"name"));
-        },
-        mouseout: function(event,date) {
-            $("#maphelper").text("Select a state.");
-        }
-    });
     $("header em").click(function(){
-        $(this).parent().slideUp(500);
+        $(this).fadeToggle(500);
+        $("header i, header br:first-of-type").fadeToggle(500);
     });
     $("table").click(function(){
         $(this).find("td").toggleClass("sel");
         if(CHAM=="house"){CHAM="senate"}else{CHAM="house"}
     });
-    $("header input").keyup(function(){
+    $("header input").keyup(function(e){
+        e.stopPropagation();
         APIKEY = $(this).val();
-        console.log(APIKEY);
+        $.ajax({
+            url: "https://api.propublica.org/congress/v1/states/members/party.json",
+            type: 'GET',
+            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
+            crossDomain: true,
+            dataType: 'json',
+            success: function(result){
+                $("header br:nth-of-type(2), header input").fadeToggle(500);
+                $("header strong").text("Data "+result.copyright);
+                var rep;
+                var dem;
+                var arr;
+                for(var i=0; i<STATES.length; i++){
+                    for(var k=0; k<result.results.senate[i][STATES[i]].length; k++){
+                        console.log("Senate "+STATES[i],result.results.senate[i][STATES[i]][k]);
+                    }
+                    for(var j=0; j<result.results.house.length; j++){
+                        if(result.results.house[j][STATES[i]]){
+                            for(var l=0; l<result.results.house[j][STATES[i]].length; l++)
+                            console.log("House "+STATES[i],result.results.house[j][STATES[i]][l])
+                        }
+                    }
+                }
+                $("#map").usmap({
+                    stateStyles: {
+                        'fill': 'white',
+                        'stroke': '#ebefc9',
+                        'stroke-width':1},
+                    stateHoverStyles: {
+                        'fill': "#d5de8e",
+                        'stroke':"black",
+                        'stroke-width':2},
+                    showLabels: false,
+                    click: function (event, data) {
+                        $.ajax({
+                            url: "https://api.propublica.org/congress/v1/members/"+CHAM+"/"+data.name+"/current.json",
+                            type: 'GET',
+                            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
+                            crossDomain: true,
+                            dataType: 'json',
+                            success: function(result){getReps(result, data)},
+                            error: function(){}
+                        });
+                    },
+                    mouseover: function(event,data){
+                        $("#maphelper").text(abbrState(data.name,"name"));
+                    },
+                    mouseout: function(event,date) {
+                        $("#maphelper").text("Select a state.");
+                    }
+                });
+                console.log(result);
+            },
+            error: function(){}
+        });
     })
 });
 
