@@ -5,7 +5,7 @@ var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','
     'NV','NY', 'OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV',
     'WY'];
 
-//COLOR MAP FEATURE
+//COLOR MAP FEATURE in progress
 
 $(document).ready(function () {
     $("header em").click(function(){
