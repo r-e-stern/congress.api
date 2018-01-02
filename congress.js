@@ -26,51 +26,66 @@ $(document).ready(function () {
             crossDomain: true,
             dataType: 'json',
             success: function(result){
-                $("header br:nth-of-type(2), header input").fadeToggle(500);
+                $("header br:nth-of-type(2), header input").empty().fadeOut(500);
                 $("header strong").text("Data "+result.copyright);
                 var rep;
                 var dem;
-                var arr;
+                var col;
+                var arr=[];
                 for(var i=0; i<STATES.length; i++){
+                    rep=[0,0];
+                    dem=[0,0];
                     for(var k=0; k<result.results.senate[i][STATES[i]].length; k++){
-                        console.log("Senate "+STATES[i],result.results.senate[i][STATES[i]][k]);
+                        if(Object.keys(result.results.senate[i][STATES[i]][k])[0]=="REP"){
+                            rep[0]+=parseFloat(result.results.senate[i][STATES[i]][k][Object.keys(result.results.senate[i][STATES[i]][k])[0]]);
+                        }
                     }
                     for(var j=0; j<result.results.house.length; j++){
                         if(result.results.house[j][STATES[i]]){
-                            for(var l=0; l<result.results.house[j][STATES[i]].length; l++)
-                            console.log("House "+STATES[i],result.results.house[j][STATES[i]][l])
+                            for(var l=0; l<result.results.house[j][STATES[i]].length; l++){
+                                if(Object.keys(result.results.house[j][STATES[i]][l])[0]=="REP"){
+                                    rep[1]+=parseFloat(result.results.house[j][STATES[i]][l][Object.keys(result.results.house[j][STATES[i]][l])[0]]);
+                                }else{
+                                    dem[1]+=parseFloat(result.results.house[j][STATES[i]][l][Object.keys(result.results.house[j][STATES[i]][l])[0]])
+                                }
+                            }
                         }
                     }
+                    col = gradient("5555cc","cc5555",99)[Math.floor((.5*(rep[0]/2)+.5*(rep[1]/(rep[1]+dem[1])))*100)];
+                    arr.push([STATES[i],col]);
                 }
-                $("#map").usmap({
-                    stateStyles: {
-                        'fill': 'white',
-                        'stroke': '#ebefc9',
-                        'stroke-width':1},
-                    stateHoverStyles: {
-                        'fill': "#d5de8e",
-                        'stroke':"black",
-                        'stroke-width':2},
-                    showLabels: false,
-                    click: function (event, data) {
-                        $.ajax({
-                            url: "https://api.propublica.org/congress/v1/members/"+CHAM+"/"+data.name+"/current.json",
-                            type: 'GET',
-                            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
-                            crossDomain: true,
-                            dataType: 'json',
-                            success: function(result){getReps(result, data)},
-                            error: function(){}
-                        });
-                    },
-                    mouseover: function(event,data){
-                        $("#maphelper").text(abbrState(data.name,"name"));
-                    },
-                    mouseout: function(event,date) {
-                        $("#maphelper").text("Select a state.");
-                    }
-                });
-                console.log(result);
+                var buildMap = "$('#map').usmap({\n" +
+                    "                    stateStyles: {\n" +
+                    "                        'fill': 'white',\n" +
+                    "                        'stroke': '#ebefc9',\n" +
+                    "                        'stroke-width':1.2},\n" +
+                    "                    stateHoverStyles: {\n" +
+                    "                        'fill': 'white'},\n" +
+                    "                    showLabels: false,\n"+
+                    "                    stateSpecificStyles:  {\n";
+                for(var i=0; i<arr.length; i++){
+                    buildMap+="'"+arr[i][0]+"': {fill: '"+arr[i][1]+"'},\n";
+                }
+                buildMap+="                    },\n"+
+                    "                    click: function (event, data) {\n" +
+                    "                        $.ajax({\n" +
+                    "                            url: 'https://api.propublica.org/congress/v1/members/'+CHAM+'/'+data.name+'/current.json',\n" +
+                    "                            type: 'GET',\n" +
+                    "                            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},\n" +
+                    "                            crossDomain: true,\n" +
+                    "                            dataType: 'json',\n" +
+                    "                            success: function(result){getReps(result, data)},\n" +
+                    "                            error: function(){}\n" +
+                    "                        });\n" +
+                    "                    },\n" +
+                    "                    mouseover: function(event,data){\n" +
+                    "                        $('#maphelper').text(abbrState(data.name,'name'));\n" +
+                    "                    },\n" +
+                    "                    mouseout: function(event,date) {\n" +
+                    "                        $('#maphelper').text('Select a state.');\n" +
+                    "                    }\n" +
+                    "                });";
+                eval(buildMap);
             },
             error: function(){}
         });
@@ -110,3 +125,6 @@ function getReps(result, data){
 
 //Taken from https://gist.github.com/calebgrove/c285a9510948b633aa47
 function abbrState(a,n){var e=[["Arizona","AZ"],["Alabama","AL"],["Alaska","AK"],["Arizona","AZ"],["Arkansas","AR"],["California","CA"],["Colorado","CO"],["Connecticut","CT"],["Delaware","DE"],["Florida","FL"],["Georgia","GA"],["Hawaii","HI"],["Idaho","ID"],["Illinois","IL"],["Indiana","IN"],["Iowa","IA"],["Kansas","KS"],["Kentucky","KY"],["Kentucky","KY"],["Louisiana","LA"],["Maine","ME"],["Maryland","MD"],["Massachusetts","MA"],["Michigan","MI"],["Minnesota","MN"],["Mississippi","MS"],["Missouri","MO"],["Montana","MT"],["Nebraska","NE"],["Nevada","NV"],["New Hampshire","NH"],["New Jersey","NJ"],["New Mexico","NM"],["New York","NY"],["North Carolina","NC"],["North Dakota","ND"],["Ohio","OH"],["Oklahoma","OK"],["Oregon","OR"],["Pennsylvania","PA"],["Rhode Island","RI"],["South Carolina","SC"],["South Dakota","SD"],["Tennessee","TN"],["Texas","TX"],["Utah","UT"],["Vermont","VT"],["Virginia","VA"],["Washington","WA"],["West Virginia","WV"],["Wisconsin","WI"],["Wyoming","WY"]];if("abbr"==n){for(a=a.replace(/\w\S*/g,function(a){return a.charAt(0).toUpperCase()+a.substr(1).toLowerCase()}),i=0;i<e.length;i++)if(e[i][0]==a)return e[i][1]}else if("name"==n)for(a=a.toUpperCase(),i=0;i<e.length;i++)if(e[i][1]==a)return e[i][0]}
+
+//Taken from iTunes API
+function gradient(t,r,n){for(var s=parseInt(t.substring(0,2),16),g=parseInt(t.substring(2,4),16),a=parseInt(t.substring(4,6),16),e=parseInt(r.substring(0,2),16),i=parseInt(r.substring(2,4),16),o=parseInt(r.substring(4,6),16),u=0,h=0,p=0,b=0,l=[],I=0;2+n>I;I++)u=I/(1+n),h=Math.floor(e*u+s*(1-u)).toString(16),p=Math.floor(i*u+g*(1-u)).toString(16),b=Math.floor(o*u+a*(1-u)).toString(16),1==h.length&&(h="0"+h),1==p.length&&(p="0"+p),1==b.length&&(b="0"+b),l.push("#"+h+p+b);return l}
