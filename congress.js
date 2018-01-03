@@ -88,6 +88,7 @@ $(document).ready(function () {
                     "                    }\n" +
                     "                });";
                 console.log(buildMap);
+                console.log(arr);
                 eval(buildMap);
             },
             error: function(){}
@@ -111,7 +112,7 @@ function getReps(result, data){
         if(result.results[i].twitter_id != null){
             $("main div:last-child").append("<a href='https://www.twitter.com/"+result.results[i].twitter_id+"'><img src='https://png.icons8.com/ios/2x/twitter.png'></a>");
         }
-        $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>")
+        $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>");
         $(".link").mouseup(function(e){
             e.stopImmediatePropagation();
             $.ajax({
@@ -122,13 +123,14 @@ function getReps(result, data){
                 dataType: 'json',
                 success: function(result){
                     console.log(result);
-                    $("main:nth-last-child(2)").after("<aside>Hi</aside>");
+                    $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)+"'><i>"+result.results[0].first_name+" "+result.results[0].last_name+"</i></aside>");
                 },
                 error: function(){}
             });
         })
     }
 }
+
 
 //Taken from https://gist.github.com/calebgrove/c285a9510948b633aa47
 function abbrState(a,n){var e=[["Arizona","AZ"],["Alabama","AL"],["Alaska","AK"],["Arizona","AZ"],["Arkansas","AR"],["California","CA"],["Colorado","CO"],["Connecticut","CT"],["Delaware","DE"],["Florida","FL"],["Georgia","GA"],["Hawaii","HI"],["Idaho","ID"],["Illinois","IL"],["Indiana","IN"],["Iowa","IA"],["Kansas","KS"],["Kentucky","KY"],["Kentucky","KY"],["Louisiana","LA"],["Maine","ME"],["Maryland","MD"],["Massachusetts","MA"],["Michigan","MI"],["Minnesota","MN"],["Mississippi","MS"],["Missouri","MO"],["Montana","MT"],["Nebraska","NE"],["Nevada","NV"],["New Hampshire","NH"],["New Jersey","NJ"],["New Mexico","NM"],["New York","NY"],["North Carolina","NC"],["North Dakota","ND"],["Ohio","OH"],["Oklahoma","OK"],["Oregon","OR"],["Pennsylvania","PA"],["Rhode Island","RI"],["South Carolina","SC"],["South Dakota","SD"],["Tennessee","TN"],["Texas","TX"],["Utah","UT"],["Vermont","VT"],["Virginia","VA"],["Washington","WA"],["West Virginia","WV"],["Wisconsin","WI"],["Wyoming","WY"]];if("abbr"==n){for(a=a.replace(/\w\S*/g,function(a){return a.charAt(0).toUpperCase()+a.substr(1).toLowerCase()}),i=0;i<e.length;i++)if(e[i][0]==a)return e[i][1]}else if("name"==n)for(a=a.toUpperCase(),i=0;i<e.length;i++)if(e[i][1]==a)return e[i][0]}

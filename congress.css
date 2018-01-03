@@ -145,7 +145,6 @@ aside{
     left:0;
     right:0;
     bottom:0;
-    font-size: 20px;
     color: white;
     font-weight: bold;
     padding: 40px;
@@ -153,11 +152,19 @@ aside{
     background-color: rgba(0,0,0,.75);
 }
 aside.R{
-
+    background-color: rgba(204,85,85,.95);
 }
 aside.D{
-
+    background-color: rgba(85,85,204,.95);
 }
 aside.I{
-
+    background-color: rgba(85,204,85,.95);
+}
+aside i{
+    color: white;
+    font-size: 24px;
+    text-shadow: -1px -1px 0 #555555,
+    1px -1px 0 #555555,
+    -1px 1px 0 #555555,
+    1px 1px 0 #555555;
 }
