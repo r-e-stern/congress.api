@@ -60,11 +60,13 @@ $(document).ready(function () {
                     "                        'stroke': '#ebefc9',\n" +
                     "                        'stroke-width':1.2},\n" +
                     "                    stateHoverStyles: {\n" +
-                    "                        'fill': 'white'},\n" +
+                    "                        'fill': 'white',\n" +
+                    "                        'stroke': 'black',\n"+
+                    "                        'stroke-width': 2},\n"+
                     "                    showLabels: false,\n"+
                     "                    stateSpecificStyles:  {\n";
                 for(var i=0; i<arr.length; i++){
-                    buildMap+="'"+arr[i][0]+"': {fill: '"+arr[i][1]+"'},\n";
+                    buildMap+="                        '"+arr[i][0]+"': {fill: '"+arr[i][1]+"'},\n";
                 }
                 buildMap+="                    },\n"+
                     "                    click: function (event, data) {\n" +
@@ -85,6 +87,7 @@ $(document).ready(function () {
                     "                        $('#maphelper').text('Select a state.');\n" +
                     "                    }\n" +
                     "                });";
+                console.log(buildMap);
                 eval(buildMap);
             },
             error: function(){}
@@ -109,14 +112,18 @@ function getReps(result, data){
             $("main div:last-child").append("<a href='https://www.twitter.com/"+result.results[i].twitter_id+"'><img src='https://png.icons8.com/ios/2x/twitter.png'></a>");
         }
         $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>")
-        $(".link").click(function(){
+        $(".link").mouseup(function(e){
+            e.stopImmediatePropagation();
             $.ajax({
                 url: $(this).data("call"),
                 type: 'GET',
                 beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
                 crossDomain: true,
                 dataType: 'json',
-                success: function(result){console.log(result)},
+                success: function(result){
+                    console.log(result);
+                    $("main:nth-last-child(2)").after("<aside>Hi</aside>");
+                },
                 error: function(){}
             });
         })
