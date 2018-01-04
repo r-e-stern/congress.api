@@ -162,9 +162,41 @@ aside.I{
 }
 aside i{
     color: white;
-    font-size: 24px;
-    text-shadow: -1px -1px 0 #555555,
-    1px -1px 0 #555555,
-    -1px 1px 0 #555555,
-    1px 1px 0 #555555;
+    font-size: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+}
+aside em{
+    font-style: normal;
+    margin-right: 15px;
+    font-weight: 700;
+    font-size:15px;
+    position:  absolute;
+    top:0;
+    right:0;
+    padding:15px;
+}
+aside em:hover{
+    color: #dddddd;
+}
+aside span{
+    border-bottom: 2px solid white;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 6px;
+    paddding-top: 10px;
+    display: inline-block;
+    line-height:16px;
+}
+aside s{
+    text-decoration: none;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13.5px;
+}
+aside div{
+    width: 80%;
+    margin: 0 auto;
+    font-weight: 300;
+    padding: 12.5px;
 }

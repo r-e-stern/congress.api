@@ -5,7 +5,8 @@ var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','
     'NV','NY', 'OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV',
     'WY'];
 
-//COLOR MAP FEATURE in progress
+//Fix Details pane
+//Pronouns
 
 $(document).ready(function () {
     $("header em").click(function(){
@@ -87,9 +88,8 @@ $(document).ready(function () {
                     "                        $('#maphelper').text('Select a state.');\n" +
                     "                    }\n" +
                     "                });";
-                console.log(buildMap);
-                console.log(arr);
                 eval(buildMap);
+                $("#map").toggle().fadeIn(500);
             },
             error: function(){}
         });
@@ -112,23 +112,30 @@ function getReps(result, data){
         if(result.results[i].twitter_id != null){
             $("main div:last-child").append("<a href='https://www.twitter.com/"+result.results[i].twitter_id+"'><img src='https://png.icons8.com/ios/2x/twitter.png'></a>");
         }
-        $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>");
-        $(".link").mouseup(function(e){
-            e.stopImmediatePropagation();
-            $.ajax({
-                url: $(this).data("call"),
-                type: 'GET',
-                beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
-                crossDomain: true,
-                dataType: 'json',
-                success: function(result){
-                    console.log(result);
-                    $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)+"'><i>"+result.results[0].first_name+" "+result.results[0].last_name+"</i></aside>");
-                },
-                error: function(){}
-            });
-        })
+        $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+result.results[i].api_uri+"'>").toggle();
     }
+    for(var i=0; i<result.results.length+1; i++){
+        eval("$('main div:nth-child("+(i+1)+")').delay("+(125*i)+").fadeIn(250)");
+    }
+    $(".link").mouseup(function(e){
+        e.stopImmediatePropagation();
+        $.ajax({
+            url: $(this).data("call"),
+            type: 'GET',
+            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
+            crossDomain: true,
+            dataType: 'json',
+            success: function(result){
+                console.log(result);
+                $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)+"'><em>X</em><span><i>"+result.results[0].first_name+" "+result.results[0].last_name+"</i><br><s>"+result.results[0].roles[0].title+" from "+abbrState(result.results[0].roles[0].state,'name')+"</s></span></aside>");
+                $("aside").append("<br/><div>"+result.results[0].first_name+" "+result.results[0].last_name+" votes with their party ("+result.results[0].roles[0].party+") "+result.results[0].roles[0].votes_with_party_pct+"% of the time.</div>").toggle().fadeIn(500);
+                $("aside em").click(function(){
+                    $("aside").fadeOut(500,function(){$("aside").remove()});
+                });
+            },
+            error: function(){}
+        });
+    })
 }
 
 
