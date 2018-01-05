@@ -6,7 +6,7 @@ var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','
     'WY'];
 
 //Fix Details pane
-//Pronouns
+//Fix committees
 
 $(document).ready(function () {
     $("header em").click(function(){
@@ -127,10 +127,49 @@ function getReps(result, data){
             dataType: 'json',
             success: function(result){
                 console.log(result);
-                $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)+"'><em>X</em><span><i>"+result.results[0].first_name+" "+result.results[0].last_name+"</i><br><s>"+result.results[0].roles[0].title+" from "+abbrState(result.results[0].roles[0].state,'name')+"</s></span></aside>");
-                $("aside").append("<br/><div>"+result.results[0].first_name+" "+result.results[0].last_name+" votes with their party ("+result.results[0].roles[0].party+") "+result.results[0].roles[0].votes_with_party_pct+"% of the time.</div>").toggle().fadeIn(500);
-                $("aside em").click(function(){
-                    $("aside").fadeOut(500,function(){$("aside").remove()});
+                $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)
+                    +"'><em>X</em><span><i>"+result.results[0].roles[0].short_title+" "
+                    +result.results[0].first_name
+                    +" "+result.results[0].last_name+"</i><br><s>"
+                    +result.results[0].roles[0].party[0]+"-"
+                    +abbrState(result.results[0].roles[0].state,"name")
+                    +"</s></span><br/><div>"
+                    +result.results[0].roles[0].short_title+" "
+                    +result.results[0].first_name+" "
+                    +result.results[0].last_name+" votes with "
+                    +pronoun(result.results[0].gender,"possessive")
+                    +" party ("+result.results[0].roles[0].party+") "
+                    +result.results[0].roles[0].votes_with_party_pct
+                    +"% of the time.<br> " +pronoun(result.results[0].gender,"personal")[0].toUpperCase()+pronoun(result.results[0].gender,"personal").substr(1)
+                    +" has sponsored "+result.results[0].roles[0].bills_sponsored
+                    +" bills in the "+cardinaltoOrdinal(parseFloat(result.results[0].roles[0].congress))
+                    +" Congress.<br/>"
+                    +"<span id='container'></span>"
+                    +pronoun(result.results[0].gender,"possessive")[0].toUpperCase()+pronoun(result.results[0].gender,"possessive").substr(1)
+                    +" office is located at "
+                    +result.results[0].roles[0].office+". <br/>It can be reached at "
+                    +result.results[0].roles[0].phone+".</div></aside>");
+                var comm_str="";
+                for(var i=0; i<result.results[0].roles[0].committees.length; i++){
+                    if(i==0 && result.results[0].roles[0].committees.length!=1){
+                        comm_str+=pronoun(result.results[0].gender,"personal")[0].toUpperCase()+pronoun(result.results[0].gender,"personal").substr(1)
+                            +" is a "+result.results[0].roles[0].committees[i].side+" "
+                            +result.results[0].roles[0].committees[i].title.toLowerCase()
+                            +" of the "+result.results[0].roles[0].committees[i].name
+                            +",";
+                    }else if(i+1==result.results[0].roles[0].committees && result.results[0].roles[0].committees.length!=1){
+                        comm_str+=" and a "+result.results[0].roles[0].committees[i].title.toLowerCase()+" of the "
+                            +result.results[0].roles[0].committees[i].name+".</br>";
+                    }else if(result.results[0].roles[0].committees.length==1){
+                        //only one committee
+                    }else{
+                        comm_str+=" a "+result.results[0].roles[0].committees[i].title.toLowerCase()
+                        +" of the "+result.results[0].roles[0].committees[i].name+",";
+                    }
+                }
+                $("#container").append(comm_str).contents().unwrap();
+                $("aside").toggle().fadeIn(500);
+                $("aside em").click(function(){$("aside").fadeOut(500,function(){$("aside").remove()});
                 });
             },
             error: function(){}
@@ -144,3 +183,35 @@ function abbrState(a,n){var e=[["Arizona","AZ"],["Alabama","AL"],["Alaska","AK"]
 
 //Taken from iTunes API
 function gradient(t,r,n){for(var s=parseInt(t.substring(0,2),16),g=parseInt(t.substring(2,4),16),a=parseInt(t.substring(4,6),16),e=parseInt(r.substring(0,2),16),i=parseInt(r.substring(2,4),16),o=parseInt(r.substring(4,6),16),u=0,h=0,p=0,b=0,l=[],I=0;2+n>I;I++)u=I/(1+n),h=Math.floor(e*u+s*(1-u)).toString(16),p=Math.floor(i*u+g*(1-u)).toString(16),b=Math.floor(o*u+a*(1-u)).toString(16),1==h.length&&(h="0"+h),1==p.length&&(p="0"+p),1==b.length&&(b="0"+b),l.push("#"+h+p+b);return l}
+
+//Taken from https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number via Horoscope
+function cardinaltoOrdinal(n){var r=n%10,t=n%100;return 1==r&&11!=t?n+"st":2==r&&12!=t?n+"nd":3==r&&13!=t?n+"rd":n+"th"}
+
+function pronoun(g,t){
+    g=g.toLowerCase();
+    if(g=="m"){
+        if(t=="possessive"){
+            return "his";
+        }else if(t=="reflexive"){
+            return "himself";
+        }else{
+            return "he";
+        }
+    }else if(g=="f"){
+        if(t=="possessive"){
+            return "her";
+        }else if(t=="reflexive"){
+            return "herself";
+        }else{
+            return "she";
+        }
+    }else{
+        if(t=="possessive"){
+            return "their";
+        }else if(t=="reflexive"){
+            return "themself";
+        }else{
+            return "they";
+        }
+    }
+}
