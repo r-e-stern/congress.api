@@ -23,7 +23,8 @@ nav{
 }
 body{
     background-color: #ebefc9;
-    font-family: "Roboto Slab";
+    font-family: "Roboto Slab", sans-serif;
+
 }
 header{
     margin: -8px;
@@ -65,9 +66,6 @@ td.sel{
     opacity: 1;
     background-color: #292b1a;
 }
-table:focus{
-    outline: ;
-}
 header strong{
     font-weight: 300;
     font-size: 12px;
@@ -77,7 +75,7 @@ header input{
     border: none;
     font-size: 16px;
     color: white;
-    font-family: "Courier New";
+    font-family: "Courier New", monospace;
     vertical-align: middle;
     background-color: transparent;
     font-weight: 700;
@@ -184,7 +182,7 @@ aside span{
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 6px;
-    paddding-top: 10px;
+    padding-top: 10px;
     display: inline-block;
     line-height:16px;
 }
@@ -195,7 +193,8 @@ aside s{
     font-size: 13.5px;
 }
 aside div{
-    width: 80%;
+    width: 65%;
+    max-width: 550px;
     margin: 0 auto;
     font-weight: 300;
     padding: 12.5px;

@@ -97,7 +97,6 @@ $(document).ready(function () {
 });
 
 function getReps(result, data){
-    console.log(result);
     $("main").empty().append("<span>"+abbrState(data.name,"name")+"</span>");
     for(var i=0; i<result.results.length; i++){
         $("main").append("<div class='"+result.results[i].party+"'><strong>"+result.results[i].role.substr(0,3)+". "+result.results[i].name+"</strong></div>");
@@ -126,7 +125,6 @@ function getReps(result, data){
             crossDomain: true,
             dataType: 'json',
             success: function(result){
-                console.log(result);
                 $("main:nth-last-child(2)").after("<aside class='"+result.results[0].current_party.substr(0,1)
                     +"'><em>X</em><span><i>"+result.results[0].roles[0].short_title+" "
                     +result.results[0].first_name
@@ -150,6 +148,9 @@ function getReps(result, data){
                     +result.results[0].roles[0].office+". <br/>It can be reached at "
                     +result.results[0].roles[0].phone+".</div></aside>");
                 var comm_str="";
+                if(result.results[0].roles[0].committees.length==0){
+                    comm_str=pronoun(result.results[0].gender,"personal")[0].toUpperCase()+pronoun(result.results[0].gender,"personal").substr(1)+" is not a member of any committees. <br/>";
+                }
                 for(var i=0; i<result.results[0].roles[0].committees.length; i++){
                     if(i==0 && result.results[0].roles[0].committees.length!=1){
                         comm_str+=pronoun(result.results[0].gender,"personal")[0].toUpperCase()+pronoun(result.results[0].gender,"personal").substr(1)
@@ -157,11 +158,15 @@ function getReps(result, data){
                             +result.results[0].roles[0].committees[i].title.toLowerCase()
                             +" of the "+result.results[0].roles[0].committees[i].name
                             +",";
-                    }else if(i+1==result.results[0].roles[0].committees && result.results[0].roles[0].committees.length!=1){
+                    }else if(((i+1)==result.results[0].roles[0].committees.length) && (result.results[0].roles[0].committees.length!=1)){
                         comm_str+=" and a "+result.results[0].roles[0].committees[i].title.toLowerCase()+" of the "
                             +result.results[0].roles[0].committees[i].name+".</br>";
                     }else if(result.results[0].roles[0].committees.length==1){
-                        //only one committee
+                        comm_str+=pronoun(result.results[0].gender,"personal")[0].toUpperCase()+pronoun(result.results[0].gender,"personal").substr(1)
+                            +" is a "+result.results[0].roles[0].committees[i].side+" "
+                            +result.results[0].roles[0].committees[i].title.toLowerCase()
+                            +" of the "+result.results[0].roles[0].committees[i].name
+                            +".<br/>";
                     }else{
                         comm_str+=" a "+result.results[0].roles[0].committees[i].title.toLowerCase()
                         +" of the "+result.results[0].roles[0].committees[i].name+",";
@@ -189,29 +194,7 @@ function cardinaltoOrdinal(n){var r=n%10,t=n%100;return 1==r&&11!=t?n+"st":2==r&
 
 function pronoun(g,t){
     g=g.toLowerCase();
-    if(g=="m"){
-        if(t=="possessive"){
-            return "his";
-        }else if(t=="reflexive"){
-            return "himself";
-        }else{
-            return "he";
-        }
-    }else if(g=="f"){
-        if(t=="possessive"){
-            return "her";
-        }else if(t=="reflexive"){
-            return "herself";
-        }else{
-            return "she";
-        }
-    }else{
-        if(t=="possessive"){
-            return "their";
-        }else if(t=="reflexive"){
-            return "themself";
-        }else{
-            return "they";
-        }
-    }
+    if(g=="m"){if(t=="possessive"){return "his";}else if(t=="reflexive"){return "himself";}else{return "he";}
+    }else if(g=="f"){if(t=="possessive"){return "her";}else if(t=="reflexive"){return "herself";}else{return "she";}
+    }else{if(t=="possessive"){return "their";}else if(t=="reflexive"){return "themself";}else{return "they";}}
 }
