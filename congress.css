@@ -1,3 +1,10 @@
+body{
+    background-color: #ebefc9;
+    font-family: "Roboto Slab", sans-serif;
+
+}
+
+/*STYLES MAP BORDER*/
 #maphelper {
     z-index: 9;
     display: block;
@@ -21,29 +28,6 @@ nav{
     margin: auto;
     border-radius: 2px;
 }
-body{
-    background-color: #ebefc9;
-    font-family: "Roboto Slab", sans-serif;
-
-}
-header{
-    margin: -8px;
-    margin-bottom: 10px;
-    padding: 4.5px;
-    font-size: 15px;
-    background-color: black;
-    color: #ebefc9;
-    text-align: center;
-}
-header em{
-    float: right;
-    font-style: normal;
-    margin-right: 15px;
-    font-weight: 700;
-}
-header em:hover{
-    color: #d5de8e;
-}
 table{
     position: absolute;
     right: 0;
@@ -66,6 +50,26 @@ td.sel{
     opacity: 1;
     background-color: #292b1a;
 }
+
+/*STYLES HEADER*/
+header{
+    margin: -8px;
+    margin-bottom: 10px;
+    padding: 4.5px;
+    font-size: 15px;
+    background-color: black;
+    color: #ebefc9;
+    text-align: center;
+}
+header em{
+    float: right;
+    font-style: normal;
+    margin-right: 15px;
+    font-weight: 700;
+}
+header em:hover {
+    color: #d5de8e;
+}
 header strong{
     font-weight: 300;
     font-size: 12px;
@@ -85,6 +89,8 @@ header input{
 header input:focus{
     outline: none;
 }
+
+/*STYLES ACTIVE AREA BELOW MAP*/
 main div{
     width: 250px;
     padding: 5px;
@@ -137,6 +143,8 @@ i{
 a{
     color: #d5de8e;
 }
+
+/*STYLES INDIVIDUAL INFORMATION SCREEN*/
 aside{
     position:fixed;
     top:0;
