@@ -1,3 +1,4 @@
+//Declare global variables.
 var APIKEY;
 var CHAM = "house";
 var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN',
@@ -5,42 +6,57 @@ var STATES = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','
     'NV','NY', 'OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV',
     'WY'];
 
+//Upon document load:
 $(document).ready(function () {
+    //On header <em> click:
     $("header em").click(function(){
-        $(this).fadeToggle(500);
-        $("header i, header br:first-of-type").fadeToggle(500);
+        //Remove instructions (but not key or (C))
+        $(this).fadeOut(500);
+        $("header i, header br:first-of-type").fadeOut(500);
     });
+    //On senate/house click:
     $("table").click(function(){
+        //Toggle senate/house
         $(this).find("td").toggleClass("sel");
         if(CHAM=="house"){CHAM="senate"}else{CHAM="house"}
     });
+    //When keypressed in API KEY box:
     $("header input").keyup(function(e){
         e.stopPropagation();
+        //Set the new API key (for testing)
         APIKEY = $(this).val();
+        //Test API Key
         $.ajax({
             url: "https://api.propublica.org/congress/v1/states/members/party.json",
             type: 'GET',
             beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
             crossDomain: true,
             dataType: 'json',
+            //If API Key succeeds:
             success: function(result){
                 var res = result.results;
+                //Remove the dialog by which to change the (working) API key
                 $("header br:nth-of-type(2), header input").empty().fadeOut(500);
+                //Add the newly-generated &copy; disclaimer
                 $("header strong").text("Data "+result.copyright);
                 var rep;
                 var dem;
                 var col;
                 var arr=[];
                 var ct;
+                //Calculate each state's partisanship:
+                //Uses results from API call
                 for(var i=0; i<STATES.length; i++){
                     rep=[0,0];
                     dem=[0,0];
+                    //Count Republicans in Senate
                     for(var k=0; k<res.senate[i][STATES[i]].length; k++){
                         ct=res.senate[i][STATES[i]][k];
                         if(Object.keys(ct)[0]=="REP"){
                             rep[0]+=parseFloat(ct[Object.keys(ct)[0]]);
                         }
                     }
+                    //Count both parties in House
                     for(var j=0; j<res.house.length; j++){
                         if(res.house[j][STATES[i]]){
                             for(var l=0; l<res.house[j][STATES[i]].length; l++){
@@ -53,9 +69,11 @@ $(document).ready(function () {
                             }
                         }
                     }
+                    //Extrapolate party %s to a hex code
                     col = gradient("5555cc","cc5555",99)[Math.floor((.5*(rep[0]/2)+.5*(rep[1]/(rep[1]+dem[1])))*100)];
                     arr.push([STATES[i],col]);
                 }
+                //Initialize the map module with the colors in question
                 var buildMap = "$('#map').usmap({\n" +
                     "                    stateStyles: {\n" +
                     "                        'fill': 'white',\n" +
@@ -67,21 +85,26 @@ $(document).ready(function () {
                     "                        'stroke-width': 2},\n"+
                     "                    showLabels: false,\n"+
                     "                    stateSpecificStyles:  {\n";
+                //add each state and its color to the string
                 for(var i=0; i<arr.length; i++){
                     buildMap+="                        '"+arr[i][0]+"': {fill: '"+arr[i][1]+"'},\n";
                 }
                 buildMap+="                    },\n"+
+                    //when a state is clicked:
                     "                    click: function (event, data) {\n" +
                     "                        $.ajax({\n" +
+                    //get its members (by active chamber button)
                     "                            url: 'https://api.propublica.org/congress/v1/members/'+CHAM+'/'+data.name+'/current.json',\n" +
                     "                            type: 'GET',\n" +
                     "                            beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},\n" +
                     "                            crossDomain: true,\n" +
                     "                            dataType: 'json',\n" +
+                    //call getReps() with the results
                     "                            success: function(result){getReps(result, data)},\n" +
                     "                            error: function(){}\n" +
                     "                        });\n" +
                     "                    },\n" +
+                    //As states are moused over display their names.
                     "                    mouseover: function(event,data){\n" +
                     "                        $('#maphelper').text(abbrState(data.name,'name'));\n" +
                     "                    },\n" +
@@ -89,19 +112,26 @@ $(document).ready(function () {
                     "                        $('#maphelper').text('Select a state.');\n" +
                     "                    }\n" +
                     "                });";
+                //execute the string as code
                 eval(buildMap);
+                //show the map
                 $("#map").toggle().fadeIn(500);
             },
+            //if API Key fails, nothing happens.
             error: function(){}
         });
     })
 });
 
+//Called when a state is clicked
 function getReps(result, data){
+    //Empty the active area
     $("main").empty().append("<span>"+abbrState(data.name,"name")+"</span>");
     var res;
+    //for each member:
     for(var i=0; i<result.results.length; i++){
         res = result.results[i];
+        //generate a div with their name, title, party (as color), social media, and a "more" button
         $("main").append("<div class='"+res.party+"'><strong>"+res.role.substr(0,3)+". "+res.name+"</strong></div>");
         if(CHAM=="house"){
             $("main div:last-child").append("<br/>District "+res.district+"<br/>");
@@ -116,6 +146,7 @@ function getReps(result, data){
         }
         $("main div:last-child").append("<img class='link' src='https://png.icons8.com/windows/540/plus.png' data-call='"+res.api_uri+"'>").toggle();
     }
+    //display them all at 125-millisecond intervals
     for(var i=0; i<result.results.length+1; i++){
         eval("$('main div:nth-child("+(i+1)+")').delay("+(125*i)+").fadeIn(250)");
     }
