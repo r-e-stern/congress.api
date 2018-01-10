@@ -150,9 +150,11 @@ function getReps(result, data){
     for(var i=0; i<result.results.length+1; i++){
         eval("$('main div:nth-child("+(i+1)+")').delay("+(125*i)+").fadeIn(250)");
     }
+    //when a "more information" button pressed:
     $(".link").mouseup(function(e){
         e.stopImmediatePropagation();
         $.ajax({
+            //get more data on the member:
             url: $(this).data("call"),
             type: 'GET',
             beforeSend: function(x){x.setRequestHeader('X-API-Key',APIKEY);},
@@ -173,21 +175,28 @@ function getReps(result, data){
                     +res.last_name+" votes with "
                     +pronoun(res.gender,"possessive")
                     +" party ("+resrol.party+") "
+                    //how often they vote with their party
                     +resrol.votes_with_party_pct
                     +"% of the time.<br> " +capitalPronoun(res.gender,"personal")
+                    //number of bills they have sponsored
                     +" has sponsored "+resrol.bills_sponsored
                     +" bills in the "+cardinaltoOrdinal(parseFloat(resrol.congress))
                     +" Congress.<br/>"
                     +"<span id='container'></span>"
                     +pronoun(res.gender,"possessive")[0].toUpperCase()+pronoun(res.gender,"possessive").substr(1)
                     +" office is located at "
+                    //where their office is
                     +resrol.office+". <br/>It can be reached at "
-                    +resrol.phone+".</div></aside>");
+                    //how to contact their office
+                    +resrol.phone+".</div></aside>")
+                //COMMITTEES:
                 var comm_str="";
+                //checks if they are not on any committees
                 if(resrol.committees.length==0){
-                    comm_str=capitalPronoun(res.gender,"personal")
+                    comm_str=capitalPronoun(res.gender,"personal")+" is not a member of any committees. <br/>";
                 }
                 var comm;
+                //if they are, loops through roles[0].committees to build a gramatically correct list of committees.
                 for(var i=0; i<resrol.committees.length; i++){
                     comm=resrol.committees[i]
                     if(i==0 && resrol.committees.length!=1){
@@ -210,8 +219,11 @@ function getReps(result, data){
                         +" of the "+comm.name+",";
                     }
                 }
+                //Removes the placeholder element that had been inserted for committees;
                 $("#container").append(comm_str).contents().unwrap();
+                //fades in the overlay
                 $("aside").toggle().fadeIn(500);
+                //allows overlay to be closed and fade out on close.
                 $("aside em").click(function(){$("aside").fadeOut(500,function(){$("aside").remove()});
                 });
             },
@@ -222,13 +234,16 @@ function getReps(result, data){
 
 
 //Taken and minified from https://gist.github.com/calebgrove/c285a9510948b633aa47
+//Converts state abbreviations (used in API & map) to names (used in this tool)
 function abbrState(a,n){var e=[["Arizona","AZ"],["Alabama","AL"],["Alaska","AK"],["Arizona","AZ"],["Arkansas","AR"],["California","CA"],["Colorado","CO"],["Connecticut","CT"],["Delaware","DE"],["Florida","FL"],["Georgia","GA"],["Hawaii","HI"],["Idaho","ID"],["Illinois","IL"],["Indiana","IN"],["Iowa","IA"],["Kansas","KS"],["Kentucky","KY"],["Kentucky","KY"],["Louisiana","LA"],["Maine","ME"],["Maryland","MD"],["Massachusetts","MA"],["Michigan","MI"],["Minnesota","MN"],["Mississippi","MS"],["Missouri","MO"],["Montana","MT"],["Nebraska","NE"],["Nevada","NV"],["New Hampshire","NH"],["New Jersey","NJ"],["New Mexico","NM"],["New York","NY"],["North Carolina","NC"],["North Dakota","ND"],["Ohio","OH"],["Oklahoma","OK"],["Oregon","OR"],["Pennsylvania","PA"],["Rhode Island","RI"],["South Carolina","SC"],["South Dakota","SD"],["Tennessee","TN"],["Texas","TX"],["Utah","UT"],["Vermont","VT"],["Virginia","VA"],["Washington","WA"],["West Virginia","WV"],["Wisconsin","WI"],["Wyoming","WY"]];if("abbr"==n){for(a=a.replace(/\w\S*/g,function(a){return a.charAt(0).toUpperCase()+a.substr(1).toLowerCase()}),i=0;i<e.length;i++)if(e[i][0]==a)return e[i][1]}else if("name"==n)for(a=a.toUpperCase(),i=0;i<e.length;i++)if(e[i][1]==a)return e[i][0]}
 
 //Taken and minified from https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number
+//Converts numbers (115) to ordinal (115th [Congress]).
 function cardinaltoOrdinal(n){var r=n%10,t=n%100;return 1==r&&11!=t?n+"st":2==r&&12!=t?n+"nd":3==r&&13!=t?n+"rd":n+"th"}
 
+//Returns a gradient of 2+stops colors from colora to colorb in hex code format.
 function gradient(colora, colorb, stops){
-    //Breaks hecidecimal into decimal RGB values
+    //Breaks hexadecimal into decimal RGB values
     var colora1 = parseInt(colora.substring(0,2),16);
     var colora2 = parseInt(colora.substring(2,4),16);
     var colora3 = parseInt(colora.substring(4,6),16);
@@ -254,6 +269,7 @@ function gradient(colora, colorb, stops){
     return color;
 }
 
+//Returns pronouns by gender and type (possessive, reflexive, personal)
 function pronoun(g,t){
     g=g.toLowerCase();
     if(g=="m"){if(t=="possessive"){return "his";}else if(t=="reflexive"){return "himself";}else{return "he";}
@@ -261,6 +277,7 @@ function pronoun(g,t){
     }else{if(t=="possessive"){return "their";}else if(t=="reflexive"){return "themself";}else{return "they";}}
 }
 
+//Capitalizes pronoun(g,t);
 function capitalPronoun(g,t){
     return pronoun(g,t)[0].toUpperCase()+pronoun(g,t).substr(1);
 }

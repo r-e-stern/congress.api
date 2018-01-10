@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CongressAPI</title>
+    <title>R.E. Stern's CongressAPI</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="jQueryMap/lib/raphael.js"></script>
     <script src="jQueryMap/jquery.usmap.js"></script>
@@ -11,13 +11,43 @@
     <script src="congress.js"></script>
 </head>
 <body>
-<header><i>Instructions: Click on a state to view its congressional delegation.</i><em>X</em><br/><strong>This tool is useless without a valid <a href="https://www.propublica.org/datastore/api/propublica-congress-api">API Key</a>.</strong><br/>
-    <input type="text" placeholder="Enter it here."></header>
-<nav>
-    <table><tr><td id="h" class="sel">House</td><td id="s">Senate</td></tr></table>
-<span id="maphelper">Select a state.</span>
-<div id="map"></div>
-</nav>
-<main></main>
+    <header>
+        <i>
+            Instructions: Click on a state to view its congressional delegation.
+        </i>
+        <em>
+            X
+        </em>
+        <br/>
+        <strong>
+            This tool is useless without a valid
+            <a href="https://www.propublica.org/datastore/api/propublica-congress-api">
+                API Key
+            </a>.
+        </strong>
+        <br/>
+        <input type="text" placeholder="Enter it here.">
+    </header>
+    <nav>
+        <table>
+            <tr>
+                <td id="h" class="sel">
+                    House
+                </td>
+                <td id="s">
+                    Senate
+                </td>
+            </tr>
+        </table>
+        <span id="maphelper">
+            Select a state.
+        </span>
+        <div id="map">
+            <!--MAP IS GENERATED HERE-->
+        </div>
+    </nav>
+    <main>
+        <!--MEMBERS OF CONGRESS APPEAR HERE-->
+    </main>
 </body>
 </html>
