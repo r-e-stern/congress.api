@@ -233,7 +233,7 @@ function getReps(result, data){
 }
 
 
-//Taken and from https://gist.github.com/calebgrove/c285a9510948b633aa47
+//Taken and minified from https://gist.github.com/calebgrove/c285a9510948b633aa47
 //Converts state abbreviations (used in API & map) to names (used in this tool)
 function abbrState(a,n){var e=[["Arizona","AZ"],["Alabama","AL"],["Alaska","AK"],["Arizona","AZ"],["Arkansas","AR"],
     ["California","CA"],["Colorado","CO"],["Connecticut","CT"],["Delaware","DE"],["Florida","FL"],["Georgia","GA"],
